@@ -18,13 +18,25 @@ from GraphBot.models import User
 
 
 
+def DeleteUser(arg_id):
+    result = User.objects.filter(id=arg_id)
+    result.delete()
+
 
 
 def UsersLookup(arg_id):
     result =  User.objects.filter(id=arg_id)
+    print(list(result))
     if not result:
         return False
     return True
+
+
+def CreateUser(arg_id, name_arg, time_span_arg):
+    if len(name_arg) >= 30:
+        return False
+    user = User(id=arg_id,time_span= time_span_arg, name=name_arg,table_num = 0 , selected_num=0)
+    user.save()
 
 
 # #Create Operations here

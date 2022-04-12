@@ -17,7 +17,7 @@ import os
 import logging
 
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
-from db_handler import UsersLookup
+from db_handler import UsersLookup, CreateUser, DeleteUser
 
 
 from telegram.ext import (
@@ -54,15 +54,16 @@ timespan = ''
 
 def startCommand(update: Update, context: CallbackContext):
     keyboardMarkup = ''
-    if UsersLookup(update.message.from_user.id):    
-         keyboardMarkup = InlineKeyboardMarkup(
-        [[InlineKeyboardButton('Delete the user', callback_data='Deleating')]]
-    )    
+    if UsersLookup(update.message.from_user.id): 
 
-    keyboardMarkup = InlineKeyboardMarkup(
-        [[InlineKeyboardButton('Create a new User', callback_data='creating')]]
-    )
-    update.message.reply_text(f'Howdy, {update.effective_user.first_name}.\nThis is the Main Menu.',
+         keyboardMarkup = InlineKeyboardMarkup(
+        [[InlineKeyboardButton('Delete the user ' + str(update.message.from_user.id), callback_data='delete')]]
+             )    
+    else:
+        keyboardMarkup = InlineKeyboardMarkup(
+            [[InlineKeyboardButton('Create a new User', callback_data='creating')]]
+        )
+    update.message.reply_text(f'Hello, {update.effective_user.first_name}.\nThis is the Main Menu.',
                               reply_markup=keyboardMarkup)
 
 def userCreationHandler(update: Update, context: CallbackContext):
@@ -71,10 +72,19 @@ def userCreationHandler(update: Update, context: CallbackContext):
             update.effective_message.text,
             reply_markup=InlineKeyboardMarkup([])
         )
-        text = f"""I\'ll share the File 1 with you to your Google account.
-Please, send me your gmail address.\n\nSend /end and I\'ll stop waiting."""
+        text = "plase enter the amount of weeks you want to plot the graph"
         bot.send_message(update.effective_chat.id, text)
         return timespan
+    if update.callback_query.data == "delete":
+        update.callback_query.edit_message_text(
+        update.effective_message.text,
+        reply_markup=InlineKeyboardMarkup([])
+          )
+        text = "Are you sure ? 'Yes|No'"
+        bot.send_message(update.effective_chat.id, text)
+        return timespan
+
+    
 
 def fallback(update, context):
        update.message.reply_text('Conv ended')
@@ -83,8 +93,15 @@ def convend(update, context):
        update.message.reply_text('Conv ended')
 
 
-def callbacktest(update, context):
+def CreateUserLocal(update, context):
+    CreateUser(update.message.from_user.id,update.effective_user.first_name, update.message.text )
     update.message.reply_text('User allready created')
+    return ConversationHandler.END
+
+def deleteUserLocal(update, context):
+    DeleteUser(update.message.from_user.id)
+    update.message.reply_text('User Deleted')
+    return ConversationHandler.END
 
 def help(update, context):
     """Send a message when the command /help is issued."""
@@ -99,7 +116,6 @@ def echo(update, context):
 def error(update, context):
     """Log Errors caused by Updates."""
     logger.warning('Update "%s" caused error "%s"', update, context.error)
-
 
 def main():
     """Start the bot."""
@@ -120,7 +136,8 @@ def main():
     states = 
     {
         timespan : [
-            MessageHandler(Filters.regex('.*@gmail.com$'), callbacktest)
+            MessageHandler(Filters.regex('^[0-9]+$'), CreateUserLocal),
+            MessageHandler(Filters.regex('^(?:Yes|No)$'), deleteUserLocal)
         ],
     }, 
     fallbacks=[CommandHandler('end', convend)],

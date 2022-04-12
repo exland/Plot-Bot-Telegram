@@ -8,7 +8,7 @@ class Teacher(models.Model):
 
 class User(models.Model):
     id =  models.PositiveIntegerField( unique = True, primary_key =True)
-    time_span =  models.TimeField()
-    name = models.BigIntegerField()
+    time_span =  models.IntegerField()
+    name = models.CharField(max_length=30)
     table_num =  models.IntegerField()
     selected_num =  models.IntegerField()
