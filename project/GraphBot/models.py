@@ -6,7 +6,9 @@ class Teacher(models.Model):
     age = models.IntegerField()
 
 
-class Person(models.Model):
-    name = models.TextField()
-    age = models.IntegerField()
-    email = models.EmailField()
+class User(models.Model):
+    id =  models.PositiveIntegerField( unique = True, primary_key =True)
+    time_span =  models.TimeField()
+    name = models.BigIntegerField()
+    table_num =  models.IntegerField()
+    selected_num =  models.IntegerField()
