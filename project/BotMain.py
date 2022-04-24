@@ -95,7 +95,7 @@ def convend(update, context):
 
 def CreateUserLocal(update, context):
     CreateUser(update.message.from_user.id,update.effective_user.first_name, update.message.text )
-    update.message.reply_text('User allready created')
+    update.message.reply_text('User created')
     return ConversationHandler.END
 
 def deleteUserLocal(update, context):
@@ -116,6 +116,20 @@ def echo(update, context):
 def error(update, context):
     """Log Errors caused by Updates."""
     logger.warning('Update "%s" caused error "%s"', update, context.error)
+
+def userInput(update, context):
+    if UsersLookup(update.message.from_user_id):
+         # Lookup the db for data
+         #create data 
+         # 1 no data new entry
+         # 2 data only one entry 
+         # 3 both inputs allready inputted
+        if MeasurementLookup(update.message.from_user_id):
+
+    else :
+        update.message.reply_text("Please start with '/start' command")
+
+
 
 def main():
     """Start the bot."""
@@ -143,6 +157,8 @@ def main():
     fallbacks=[CommandHandler('end', convend)],
     )
 
+
+    dispatcher.add_handler(MessageHandler(Filters.regex('^[0-9](\.[0-9]+)?$'), userInput))
     dispatcher.add_handler(user_conv)
     # on noncommand i.e message - echo the message on Telegram
     # log all errors

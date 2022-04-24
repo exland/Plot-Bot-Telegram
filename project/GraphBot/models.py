@@ -12,3 +12,11 @@ class User(models.Model):
     name = models.CharField(max_length=30)
     table_num =  models.IntegerField()
     selected_num =  models.IntegerField()
+
+
+class Measurement(models.Model):
+    id = models.PositiveIntegerField( unique = True, primary_key =True)
+    val1 = models.FloatField()
+    val2 = models.FloatField()
+    average = models.FloatField()
+    date= models.DateField()
