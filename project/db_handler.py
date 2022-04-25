@@ -3,6 +3,7 @@ import sys
 
 import django
 import datetime
+from enums import UserInput
 
 """Run administrative tasks."""
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'project.settings')
@@ -15,7 +16,7 @@ application = get_wsgi_application()
 
 
 #import your models schema
-from GraphBot.models import User
+from GraphBot.models import User, Measurement
 
 
 
@@ -27,7 +28,7 @@ def DeleteUser(arg_id):
 
 def UsersLookup(arg_id):
     result =  User.objects.filter(id=arg_id)
-    print(list(result))
+    #print(list(result))
     if not result:
         return False
     return True
@@ -43,7 +44,30 @@ def CreateUser(arg_id, name_arg, time_span_arg):
 
 
 def MeasurementLookup(arg_id):
-    result = Measurement.objects.exclude(id=arg_id, date= datetime.datetime.now())
+    print("in measuremetn lookup")
+    result = Measurement.objects.filter(id= arg_id, date= datetime.date.today()).values()[0]
+
+    print(result)
+    if not result:
+        return UserInput.Empty
+    elif result['val2'] == None: 
+        return UserInput.One
+    else:
+        return UserInput.Both
+
+def MeasurementIncertion(arg_id, arg_value1, arg_value2 = None, arg_date = datetime.date.today()):
+    arg_average = None
+    if(arg_value2 != None):
+       arg_average = (arg_value1 + arg_value2 ) / 2
+       measure =  Measurement(id= arg_id, val1 =  arg_value1, val2=  arg_value2, average=arg_average, date= arg_date)
+       measure.save()
+    else : 
+       measure = Measurement(id=arg_id, val1= arg_value1, date=arg_date)
+       measure.save()
+
+
+
+
 
 # #Create Operations here
 # data_dict={'name':'Nimish','age':23}

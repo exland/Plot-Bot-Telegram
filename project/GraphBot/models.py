@@ -16,7 +16,7 @@ class User(models.Model):
 
 class Measurement(models.Model):
     id = models.PositiveIntegerField( unique = True, primary_key =True)
-    val1 = models.FloatField()
-    val2 = models.FloatField()
-    average = models.FloatField()
+    val1 = models.FloatField(null=True, blank=True)
+    val2 = models.FloatField(null=True, blank=True)
+    average = models.FloatField(null=True, blank=True)
     date= models.DateField()

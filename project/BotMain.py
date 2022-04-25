@@ -17,7 +17,7 @@ import os
 import logging
 
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
-from db_handler import UsersLookup, CreateUser, DeleteUser
+from db_handler import *
 
 
 from telegram.ext import (
@@ -118,13 +118,22 @@ def error(update, context):
     logger.warning('Update "%s" caused error "%s"', update, context.error)
 
 def userInput(update, context):
-    if UsersLookup(update.message.from_user_id):
+    if UsersLookup(update.message.from_user.id):
          # Lookup the db for data
          #create data 
          # 1 no data new entry
          # 2 data only one entry 
          # 3 both inputs allready inputted
-        if MeasurementLookup(update.message.from_user_id):
+        db_lookup =  MeasurementLookup(update.message.from_user.id)
+
+        if db_lookup == UserInput.Empty:
+            MeasurementIncertion(update.message.from_user.id, update.message.text)
+        elif db_lookup == UserInput.One:
+            print("elif")
+        elif db_lookup == UserInput.Both:
+            print("elif2")
+        else:
+            AssertionError()
 
     else :
         update.message.reply_text("Please start with '/start' command")
@@ -158,7 +167,7 @@ def main():
     )
 
 
-    dispatcher.add_handler(MessageHandler(Filters.regex('^[0-9](\.[0-9]+)?$'), userInput))
+    dispatcher.add_handler(MessageHandler(Filters.regex('^[0-9]+(\.[0-9]+)?$'), userInput))
     dispatcher.add_handler(user_conv)
     # on noncommand i.e message - echo the message on Telegram
     # log all errors
