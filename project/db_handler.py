@@ -44,15 +44,20 @@ def CreateUser(arg_id, name_arg, time_span_arg):
 
 
 def MeasurementLookup(arg_id):
-    print("in measuremetn lookup")
-    result = Measurement.objects.filter(id= arg_id, date= datetime.date.today()).values()[0]
-
-    print(result)
+    print("in measureetn lookup")
+    chopeed = ""
+    result = Measurement.objects.filter(id= arg_id, date= datetime.date.today()).values()
+    if(len(result) > 0):
+        chopeed = result[0]
     if not result:
+        print("empty")
         return UserInput.Empty
-    elif result['val2'] == None: 
-        return UserInput.One
+
+    elif chopeed['val2'] == None: 
+        print("second")
+        return UserInput.One 
     else:
+        print("third")
         return UserInput.Both
 
 def MeasurementIncertion(arg_id, arg_value1, arg_value2 = None, arg_date = datetime.date.today()):
@@ -65,7 +70,12 @@ def MeasurementIncertion(arg_id, arg_value1, arg_value2 = None, arg_date = datet
        measure = Measurement(id=arg_id, val1= arg_value1, date=arg_date)
        measure.save()
 
+def MeasurementUpdate(arg_id, arg_value2):
 
+    result = Measurement.objects.filter(id= arg_id, date= datetime.date.today())[0]
+    average_cal = (result["val1"] + arg_value2 )  / 2 #calculate average
+    Measurement.objects.filter(id= arg_id, date= datetime.date.today()).update(val2=arg_value2, average=average_cal)
+    print(Measurement.objects.filter(id= arg_id, date= datetime.date.today()).values())
 
 
 

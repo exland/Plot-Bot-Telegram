@@ -129,7 +129,7 @@ def userInput(update, context):
         if db_lookup == UserInput.Empty:
             MeasurementIncertion(update.message.from_user.id, update.message.text)
         elif db_lookup == UserInput.One:
-            print("elif")
+            MeasurementUpdate(update.message.from_user.id, update.message.text)
         elif db_lookup == UserInput.Both:
             print("elif2")
         else:
